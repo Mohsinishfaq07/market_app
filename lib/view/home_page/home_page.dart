@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market/constants/constants.dart';
-import 'package:market/view/sell_section/sell_page.dart';
+import 'package:market/view/sell_section/main_categories.dart';
 import 'package:market/widgets/app_bar/custom_app_bar.dart';
 
 class HomePage extends ConsumerWidget {
@@ -20,7 +20,7 @@ class HomePage extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                globalFunctions.nextScreen(context, SellPage());
+                globalFunctions.nextScreen(context, MainCategoriesPage());
               },
               child: const Text('Sell Page'),
             ),
