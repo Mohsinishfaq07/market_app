@@ -1,34 +1,48 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
+import 'package:market/models/selling_models/headphone_model.dart';
 import 'package:market/widgets/custom_input/custom_input_field.dart';
 
-class MobileSell extends ConsumerWidget {
-  const MobileSell({super.key});
+class AccessoryHeadphones extends ConsumerWidget {
+  const AccessoryHeadphones({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        spacing: 10.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Category: Mobiles'),
-          const Text('Brand Name'),
+          const Text('Category: Accessories - Headphones'),
+          const Text('HeadPhone Type'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
               return MyTextField(
-                hintText: 'Enter Brand Name',
+                hintText: 'Wireless / Wired',
                 onChanged: (val) {
-                  ref.read(productSellProvider.productName.notifier).state =
+                  ref.read(productSellProvider.headphoneType.notifier).state =
                       val;
                 },
               );
             },
           ),
-          const Text('Add Title'),
+          const Text('Condition'),
+          Consumer(
+            builder: (_, WidgetRef ref, __) {
+              return MyTextField(
+                hintText: 'Old/New',
+                onChanged: (val) {
+                  ref
+                      .read(productSellProvider.productCondition.notifier)
+                      .state = val;
+                },
+              );
+            },
+          ),
+          const Text('Ad Title'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
               return MyTextField(
@@ -40,7 +54,7 @@ class MobileSell extends ConsumerWidget {
               );
             },
           ),
-          const Text('Add Description'),
+          const Text('Description'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
               return MyTextField(
@@ -53,7 +67,7 @@ class MobileSell extends ConsumerWidget {
               );
             },
           ),
-          const Text('Add Location'),
+          const Text('Location'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
               return MyTextField(
@@ -65,7 +79,7 @@ class MobileSell extends ConsumerWidget {
               );
             },
           ),
-          const Text('Add Price'),
+          const Text('Price'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
               return MyTextField(
@@ -80,7 +94,10 @@ class MobileSell extends ConsumerWidget {
           ),
           Consumer(
             builder: (_, WidgetRef ref, __) {
-              final productBrand = ref.watch(productSellProvider.productName);
+              final headPhoneType =
+                  ref.watch(productSellProvider.headphoneType);
+              final productCondition =
+                  ref.watch(productSellProvider.productCondition);
               final productTitle = ref.watch(productSellProvider.productTitle);
               final productDescription =
                   ref.watch(productSellProvider.productDescription);
@@ -90,8 +107,9 @@ class MobileSell extends ConsumerWidget {
 
               return Center(
                 child: ElevatedButton(
-                    onPressed: () {
-                      if (productBrand.isEmpty ||
+                    onPressed: () async {
+                      if (headPhoneType.isEmpty ||
+                          productCondition.isEmpty ||
                           productTitle.isEmpty ||
                           productDescription.isEmpty ||
                           productPrice.isEmpty ||
@@ -100,12 +118,24 @@ class MobileSell extends ConsumerWidget {
                             message: 'Please fill all the fields',
                             toastType: ToastType.error);
                       } else {
-                        globalFunctions.showToast(
-                            message: 'Posted Successfully',
-                            toastType: ToastType.success);
+                        AccessoryHeadphonesModel accessoryHeadphonesModel =
+                            AccessoryHeadphonesModel(
+                          headphoneType: headPhoneType,
+                          productCondition: productCondition,
+                          productTitle: productTitle,
+                          productDescription: productDescription,
+                          productLocation: productLocation,
+                          productPrice: productPrice,
+                          images: ['functionality remaining'],
+                          uploadedBy: FirebaseAuth.instance.currentUser!.uid,
+                        );
+                        await firestoreService.uploadProductData(
+                          collectionName: "headphones",
+                          productData: accessoryHeadphonesModel.toMap(),
+                        );
                       }
                     },
-                    child: const Text('Post Product')),
+                    child: const Text('Post')),
               );
             },
           )

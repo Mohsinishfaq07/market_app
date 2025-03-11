@@ -7,9 +7,7 @@ import 'package:market/providers/auth_providers/auth_provider.dart';
 import 'package:market/services/firestore/firestore_service.dart';
 
 GlobalFunctions globalFunctions = GlobalFunctions();
-AuthServices authServices = AuthServices();
 
-FirestoreService firestoreService = FirestoreService();
 Lists lists = Lists();
 
 // provider
@@ -17,3 +15,8 @@ Lists lists = Lists();
 AuthenticationProvider authProvider = AuthenticationProvider();
 SellSectionProvider sellSectionProvider = SellSectionProvider();
 ProductSellProvider productSellProvider = ProductSellProvider();
+
+// services
+AuthServices authServices = AuthServices();
+
+FirestoreService firestoreService = FirestoreService();

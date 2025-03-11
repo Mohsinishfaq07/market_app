@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market/enums/global_enums.dart';
-import 'package:market/view/product_selling/mobile_sell.dart';
-import 'package:market/view/product_selling/tablet_sell.dart';
-import 'package:market/view/product_selling/watch_sell_details.dart';
+import 'package:market/view/product_selling/bike_section/bike_sell_details.dart';
+import 'package:market/view/product_selling/bike_section/bike_spare_parts_sell_details.dart';
+import 'package:market/view/product_selling/cars_section/cars_sell_details.dart';
+import 'package:market/view/product_selling/cars_section/cars_spare_parts_seel_details.dart';
+import 'package:market/view/product_selling/mobile_section/charger_selling_details.dart';
+import 'package:market/view/product_selling/mobile_section/headphone_selling_details.dart';
+import 'package:market/view/product_selling/mobile_section/mobile_sell.dart';
+import 'package:market/view/product_selling/mobile_section/tablet_sell.dart';
+import 'package:market/view/product_selling/mobile_section/watch_sell_details.dart';
 
 class ProductSellDetails extends ConsumerWidget {
   final ProductSellType productSellType;
@@ -30,19 +36,19 @@ class ProductSellDetails extends ConsumerWidget {
       case ProductSellType.accessories:
         return WatchSellDetails();
       case ProductSellType.accessoriesCharger:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        return AccessoryCharger();
       case ProductSellType.accessoriesHeadphones:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        return AccessoryHeadphones();
       case ProductSellType.smartwatch:
         return WatchSellDetails();
       case ProductSellType.car:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        return CarsSell();
+      case ProductSellType.carSpareParts:
+        return CarsSparePartsSellDetails();
       case ProductSellType.bike:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        return BikeSell();
+      case ProductSellType.bikeSpareParts:
+        return BikeSparePartsSellDetails();
     }
   }
 }

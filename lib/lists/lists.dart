@@ -24,7 +24,7 @@ class Lists {
           globalFunctions.nextScreen(
               context,
               SubCategoriesPage(
-                subCategoryList: [],
+                subCategoryList: getCarCategoryList(context: context),
               ));
         },
       },
@@ -34,7 +34,7 @@ class Lists {
           globalFunctions.nextScreen(
               context,
               SubCategoriesPage(
-                subCategoryList: [],
+                subCategoryList: getBikeCategoryList(context: context),
               ));
         },
       },
@@ -109,6 +109,60 @@ class Lists {
               context,
               ProductSellDetails(
                 productSellType: ProductSellType.accessoriesHeadphones,
+              ));
+        },
+      },
+    ];
+  }
+
+  // cars category list
+  List<Map<String, dynamic>> getCarCategoryList(
+      {required BuildContext context}) {
+    return [
+      {
+        'name': 'Cars',
+        'onTap': () {
+          globalFunctions.nextScreen(
+              context,
+              ProductSellDetails(
+                productSellType: ProductSellType.car,
+              ));
+        },
+      },
+      {
+        'name': 'Spare Parts',
+        'onTap': () {
+          globalFunctions.nextScreen(
+              context,
+              ProductSellDetails(
+                productSellType: ProductSellType.carSpareParts,
+              ));
+        },
+      },
+    ];
+  }
+
+  // bike category list
+  List<Map<String, dynamic>> getBikeCategoryList(
+      {required BuildContext context}) {
+    return [
+      {
+        'name': 'Bikes',
+        'onTap': () {
+          globalFunctions.nextScreen(
+              context,
+              ProductSellDetails(
+                productSellType: ProductSellType.bike,
+              ));
+        },
+      },
+      {
+        'name': 'Bike Parts',
+        'onTap': () {
+          globalFunctions.nextScreen(
+              context,
+              ProductSellDetails(
+                productSellType: ProductSellType.bikeSpareParts,
               ));
         },
       },

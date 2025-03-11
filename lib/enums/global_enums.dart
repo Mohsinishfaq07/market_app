@@ -8,5 +8,7 @@ enum ProductSellType {
   accessoriesHeadphones,
   smartwatch,
   car,
+  carSpareParts,
   bike,
+  bikeSpareParts,
 }

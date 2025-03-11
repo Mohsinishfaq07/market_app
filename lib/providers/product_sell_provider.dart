@@ -25,4 +25,17 @@ class ProductSellProvider {
   final productCondition = StateProvider<String>((ref) {
     return '';
   });
+
+  final chargerForDevice = StateProvider<String>((ref) {
+    return '';
+  });
+  final chargerType = StateProvider<String>((ref) {
+    return '';
+  });
+  final headphoneType = StateProvider<String>((ref) {
+    return '';
+  });
+  final carCompanyName = StateProvider<String>((ref) {
+    return '';
+  });
 }
