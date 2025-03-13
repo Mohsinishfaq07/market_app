@@ -2,40 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductSellProvider {
-  final imageLists = StateProvider((ref) {
+  final imageLists = StateProvider.autoDispose<List<String>>((ref) {
     return [];
   });
 
-  final productName = StateProvider<String>((ref) {
-    return '';
+  final productName = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
 
-  final productDescription = StateProvider<String>((ref) {
+  final productDescription = StateProvider.autoDispose<String>((ref) {
     return '';
   });
-  final productPrice = StateProvider<String>((ref) {
+  final productPrice = StateProvider.autoDispose<String>((ref) {
     return '';
   });
-  final productLocation = StateProvider<String>((ref) {
+  final productLocation = StateProvider.autoDispose<String>((ref) {
     return '';
   });
-  final productTitle = StateProvider<String>((ref) {
+  final productTitle = StateProvider.autoDispose<String>((ref) {
     return '';
   });
-  final productCondition = StateProvider<String>((ref) {
-    return '';
+  final productCondition = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
 
-  final chargerForDevice = StateProvider<String>((ref) {
-    return '';
+  final chargerForDevice = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
-  final chargerType = StateProvider<String>((ref) {
-    return '';
+  final chargerType = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
-  final headphoneType = StateProvider<String>((ref) {
-    return '';
+  final headphoneType = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
-  final carCompanyName = StateProvider<String>((ref) {
-    return '';
+  final carCompanyName = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
+  });
+  final sparePartType = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
+  });
+
+  final bikeCompanyName = StateProvider.autoDispose<String>((ref) {
+    return 'Select';
   });
 }

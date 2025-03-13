@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/selling_models/bike_spare_parts_model.dart';
 import 'package:market/models/selling_models/cars_spare_parts_model.dart';
+import 'package:market/widgets/custom_dropdown/custom_dropdown.dart';
 
 import 'package:market/widgets/custom_input/custom_input_field.dart';
 
@@ -19,16 +23,117 @@ class BikeSparePartsSellDetails extends ConsumerWidget {
         spacing: 10.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Category: Bike Spare Parts'),
-          const Text('Brand Name'),
+          const Text('Category: Bikes Spare Part Type'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Product Images'),
+              Consumer(
+                builder: (_, WidgetRef ref, __) {
+                  return ElevatedButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+
+                        final List<XFile> images =
+                            await picker.pickMultiImage();
+                        List<String> imagesList = [];
+                        for (var image in images) {
+                          imagesList.add(image.path);
+                        }
+                        ref
+                            .read(productSellProvider.imageLists.notifier)
+                            .state = imagesList;
+                      },
+                      child: Text('Add Images'));
+                },
+              ),
+            ],
+          ),
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              border: Border.all(color: Colors.grey, width: 2),
+            ),
+            child: Consumer(
+              builder: (_, WidgetRef ref, __) {
+                final images = ref.watch(productSellProvider.imageLists);
+                return ListView.builder(
+                  itemCount: images.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      height: 100,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(color: Colors.grey, width: 2),
+                        image: DecorationImage(
+                          fit: BoxFit.contain,
+                          image: FileImage(
+                            File(
+                              images[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                            onPressed: () {
+                              final updatedImages = List<String>.from(images);
+                              updatedImages.removeAt(index);
+                              ref
+                                  .read(productSellProvider.imageLists.notifier)
+                                  .state = updatedImages;
+                            },
+                            icon: Icon(Icons.delete, color: Colors.red)),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          const Text('Type'),
           Consumer(
             builder: (_, WidgetRef ref, __) {
-              return MyTextField(
-                hintText: 'Enter Brand Name',
+              final sparePartType =
+                  ref.watch(productSellProvider.sparePartType);
+              return CustomDropdown(
+                items: [
+                  'Select',
+                  'Bike Parts',
+                  'Other Parts',
+                ],
                 onChanged: (val) {
-                  ref.read(productSellProvider.productName.notifier).state =
-                      val;
+                  if (val != null) {
+                    ref.read(productSellProvider.sparePartType.notifier).state =
+                        val;
+                  }
                 },
+                selectedValue: sparePartType.toString(),
+              );
+            },
+          ),
+          const Text('Condition'),
+          Consumer(
+            builder: (_, WidgetRef ref, __) {
+              final condition = ref.watch(productSellProvider.productCondition);
+              return CustomDropdown(
+                items: [
+                  'Select',
+                  'New',
+                  'Used',
+                ],
+                onChanged: (val) {
+                  if (val != null) {
+                    ref
+                        .read(productSellProvider.productCondition.notifier)
+                        .state = val;
+                  }
+                },
+                selectedValue: condition.toString(),
               );
             },
           ),
@@ -40,19 +145,6 @@ class BikeSparePartsSellDetails extends ConsumerWidget {
                 onChanged: (val) {
                   ref.read(productSellProvider.productTitle.notifier).state =
                       val;
-                },
-              );
-            },
-          ),
-          const Text('Condition'),
-          Consumer(
-            builder: (_, WidgetRef ref, __) {
-              return MyTextField(
-                hintText: 'New/Old',
-                onChanged: (val) {
-                  ref
-                      .read(productSellProvider.productCondition.notifier)
-                      .state = val;
                 },
               );
             },
@@ -97,7 +189,8 @@ class BikeSparePartsSellDetails extends ConsumerWidget {
           ),
           Consumer(
             builder: (_, WidgetRef ref, __) {
-              final productBrand = ref.watch(productSellProvider.productName);
+              final sparePartType =
+                  ref.watch(productSellProvider.sparePartType);
               final productTitle = ref.watch(productSellProvider.productTitle);
               final productCondition =
                   ref.watch(productSellProvider.productCondition);
@@ -106,34 +199,36 @@ class BikeSparePartsSellDetails extends ConsumerWidget {
               final productPrice = ref.watch(productSellProvider.productPrice);
               final productLocation =
                   ref.watch(productSellProvider.productLocation);
-
+              final images = ref.watch(productSellProvider.imageLists);
               return Center(
                 child: ElevatedButton(
                     onPressed: () async {
-                      if (productBrand.isEmpty ||
-                          productTitle.isEmpty ||
+                      if (productTitle.isEmpty ||
+                          sparePartType == 'Select' ||
+                          productCondition == 'Select' ||
                           productDescription.isEmpty ||
                           productPrice.isEmpty ||
                           productCondition.isEmpty ||
+                          images.isEmpty ||
                           productLocation.isEmpty) {
                         globalFunctions.showToast(
                             message: 'Please fill all the fields',
                             toastType: ToastType.error);
                       } else {
-                        BikeSparePartsModel bikeSparePartsSellDetailsModel =
+                        BikeSparePartsModel BikeSparePartsSellDetailsModel =
                             BikeSparePartsModel(
-                          productBrand: productBrand,
+                          sparePartType: sparePartType,
                           productTitle: productTitle,
                           productCondition: productCondition,
                           productDescription: productDescription,
                           productLocation: productLocation,
                           productPrice: productPrice,
-                          images: ['functionality remaining'],
+                          images: images,
                           uploadedBy: FirebaseAuth.instance.currentUser!.uid,
                         );
                         await firestoreService.uploadProductData(
-                          collectionName: "bikeSpareParts",
-                          productData: bikeSparePartsSellDetailsModel.toMap(),
+                          collectionName: "carsSpareParts",
+                          productData: BikeSparePartsSellDetailsModel.toMap(),
                         );
                       }
                     },

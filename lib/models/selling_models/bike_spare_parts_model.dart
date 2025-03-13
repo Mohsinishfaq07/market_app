@@ -1,5 +1,6 @@
 class BikeSparePartsModel {
-  final String productBrand;
+  final String sparePartType;
+
   final String productTitle;
   final String productCondition;
   final String productDescription;
@@ -9,7 +10,6 @@ class BikeSparePartsModel {
   final String uploadedBy;
 
   BikeSparePartsModel({
-    required this.productBrand,
     required this.productTitle,
     required this.productCondition,
     required this.productDescription,
@@ -17,11 +17,11 @@ class BikeSparePartsModel {
     required this.productPrice,
     required this.images,
     required this.uploadedBy,
+    required this.sparePartType,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'productBrand': productBrand,
       'productTitle': productTitle,
       'productCondition': productCondition,
       'productDescription': productDescription,
@@ -29,12 +29,13 @@ class BikeSparePartsModel {
       'productPrice': productPrice,
       'images': images,
       'uploadedBy': uploadedBy,
+      'sparePartType': sparePartType
     };
   }
 
   factory BikeSparePartsModel.fromMap(Map<String, dynamic> map) {
     return BikeSparePartsModel(
-      productBrand: map['productBrand'] ?? '',
+      sparePartType: map['sparePartType'] ?? '',
       productTitle: map['productTitle'] ?? '',
       productCondition: map['productCondition'] ?? '',
       productDescription: map['productDescription'] ?? '',

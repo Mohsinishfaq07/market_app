@@ -1,7 +1,7 @@
 class BikeSellModel {
   final String bikeCompanyName;
   final String productTitle;
-  final String productCondition;
+
   final String productDescription;
   final String productLocation;
   final String productPrice;
@@ -11,7 +11,6 @@ class BikeSellModel {
   BikeSellModel({
     required this.bikeCompanyName,
     required this.productTitle,
-    required this.productCondition,
     required this.productDescription,
     required this.productLocation,
     required this.productPrice,
@@ -23,7 +22,6 @@ class BikeSellModel {
     return {
       'bikeCompanyName': bikeCompanyName,
       'productTitle': productTitle,
-      'productCondition': productCondition,
       'productDescription': productDescription,
       'productLocation': productLocation,
       'productPrice': productPrice,
@@ -36,7 +34,6 @@ class BikeSellModel {
     return BikeSellModel(
       bikeCompanyName: map['bikeCompanyName'] ?? '',
       productTitle: map['productTitle'] ?? '',
-      productCondition: map['productCondition'] ?? '',
       productDescription: map['productDescription'] ?? '',
       productLocation: map['productLocation'] ?? '',
       productPrice: map['productPrice'] ?? '',

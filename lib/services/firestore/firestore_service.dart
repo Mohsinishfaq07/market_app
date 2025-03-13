@@ -27,7 +27,11 @@ class FirestoreService {
     required Map<String, dynamic> productData,
   }) async {
     try {
-      await _firestore.collection(collectionName).add(productData);
+      await _firestore
+          .collection('categories')
+          .doc('categories')
+          .collection(collectionName)
+          .add(productData);
       globalFunctions.showLog(
           message: "Product uploaded successfully to $collectionName");
       globalFunctions.showToast(message: 'Posted', toastType: ToastType.info);
