@@ -27,6 +27,10 @@ class FirestoreService {
     required Map<String, dynamic> productData,
   }) async {
     try {
+      await _firestore.collection('categories').doc('categories').update({
+        'collections': FieldValue.arrayUnion([collectionName]),
+      });
+
       await _firestore
           .collection('categories')
           .doc('categories')
@@ -39,5 +43,34 @@ class FirestoreService {
       globalFunctions.showLog(message: "Error uploading product: $e");
       rethrow;
     }
+  }
+
+  // fetch categories
+  Stream<List<String>> fetchCategoryNames() {
+    return FirebaseFirestore.instance
+        .collection("categories")
+        .doc("categories")
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        List<dynamic> data = snapshot.data()?["categories"] ?? [];
+        return List<String>.from(data);
+      } else {
+        return [];
+      }
+    });
+  }
+
+  Stream<List<Map<String, dynamic>>> fetchCategoryProducts({
+    required String categoryName,
+  }) {
+    return FirebaseFirestore.instance
+        .collection("categories")
+        .doc("categories")
+        .collection(categoryName)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    });
   }
 }

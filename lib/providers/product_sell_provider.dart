@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:market/enums/global_enums.dart';
 
 class ProductSellProvider {
   final imageLists = StateProvider.autoDispose<List<String>>((ref) {
@@ -44,5 +45,9 @@ class ProductSellProvider {
 
   final bikeCompanyName = StateProvider.autoDispose<String>((ref) {
     return 'Select';
+  });
+
+  final selectedCategory = StateProvider.autoDispose<Categories>((ref) {
+    return Categories.chargers;
   });
 }

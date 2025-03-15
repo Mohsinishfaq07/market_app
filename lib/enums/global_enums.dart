@@ -12,3 +12,10 @@ enum ProductSellType {
   bike,
   bikeSpareParts,
 }
+
+enum Categories {
+  mobiles,
+  tablets,
+  chargers,
+  headphones,
+}
