@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:market/view/auth/login.dart';
 import 'package:market/view/home_page/home_page.dart';
 
 class AuthServices {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   checkUserStatus({
     required BuildContext context,
   }) async {
@@ -187,5 +189,17 @@ class AuthServices {
         debugPrint(e.toString());
       }
     }
+  }
+
+  Future<UserDetail> getUserDetails({required String userId}) async {
+    late UserDetail userDetails;
+    try {
+      final snapshot = await firestore.collection('users').doc(userId).get();
+      userDetails =
+          UserDetail.fromJson(snapshot.data() as Map<String, dynamic>);
+    } catch (e) {
+      globalFunctions.showLog(message: "Error getting user details: $e");
+    }
+    return userDetails;
   }
 }

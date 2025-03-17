@@ -28,7 +28,7 @@ class FirestoreService {
   }) async {
     try {
       await _firestore.collection('categories').doc('categories').update({
-        'collections': FieldValue.arrayUnion([collectionName]),
+        'categories': FieldValue.arrayUnion([collectionName]),
       });
 
       await _firestore

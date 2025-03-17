@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/selling_models/charger_model.dart';
 import 'package:market/models/selling_models/headphone_model.dart';
 import 'package:market/models/selling_models/mobile_model.dart';
 import 'package:market/models/selling_models/tablet_model.dart';
+import 'package:market/models/user_detail.dart';
 import 'package:market/widgets/app_bar/custom_app_bar.dart';
 
 class ProductPage extends StatelessWidget {
@@ -37,6 +39,30 @@ class MobileMainProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     MobileSellModel mobileModel = MobileSellModel.fromMap(productData);
     return Scaffold(
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 20.0,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
+            },
+            child: const Icon(Icons.phone),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openWhatsApp(
+                phoneNumber: ownerDetails.phoneNumber,
+              );
+            },
+            child: const Icon(Icons.message),
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         title: 'Product Page',
@@ -84,6 +110,30 @@ class TabletMainProductPage extends StatelessWidget {
     TabletSellModel tabletModel = TabletSellModel.fromMap(productData);
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 20.0,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
+            },
+            child: const Icon(Icons.phone),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openWhatsApp(
+                phoneNumber: ownerDetails.phoneNumber,
+              );
+            },
+            child: const Icon(Icons.message),
+          ),
+        ],
+      ),
       appBar: CustomAppBar(
         title: 'Product Page',
       ),
@@ -138,6 +188,30 @@ class ChargerMainPRoductPage extends StatelessWidget {
         AccessoryChargerModel.fromMap(productData);
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 20.0,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
+            },
+            child: const Icon(Icons.phone),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openWhatsApp(
+                phoneNumber: ownerDetails.phoneNumber,
+              );
+            },
+            child: const Icon(Icons.message),
+          ),
+        ],
+      ),
       appBar: CustomAppBar(
         title: 'Product Page',
       ),
@@ -194,6 +268,30 @@ class HeadPhoneMainProductPage extends StatelessWidget {
         AccessoryHeadphonesModel.fromMap(productData);
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 20.0,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
+            },
+            child: const Icon(Icons.phone),
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              UserDetail ownerDetails = await authServices.getUserDetails(
+                  userId: productData['uploadedBy']);
+              globalFunctions.openWhatsApp(
+                phoneNumber: ownerDetails.phoneNumber,
+              );
+            },
+            child: const Icon(Icons.message),
+          ),
+        ],
+      ),
       appBar: CustomAppBar(
         title: 'Product Page',
       ),
