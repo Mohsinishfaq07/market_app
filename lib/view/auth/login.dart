@@ -59,9 +59,15 @@ class LoginPage extends ConsumerWidget {
               Consumer(builder: (context, ref, child) {
                 return ElevatedButton(
                   onPressed: () {
+                    globalFunctions.showLog(
+                        message:
+                            'email:${ref.watch(authProvider.emailController)}');
+                    globalFunctions.showLog(
+                        message:
+                            'password:${ref.watch(authProvider.passwordController)}');
                     authServices.login(
-                        email: ref.read(authProvider.emailController),
-                        password: ref.read(authProvider.passwordController),
+                        email: ref.watch(authProvider.emailController),
+                        password: ref.watch(authProvider.passwordController),
                         context: context,
                         widgetRef: ref);
                   },

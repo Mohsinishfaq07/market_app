@@ -50,4 +50,8 @@ class ProductSellProvider {
   final selectedCategory = StateProvider.autoDispose<Categories>((ref) {
     return Categories.chargers;
   });
+
+  final searchProduct = StateProvider.autoDispose<String>((ref) {
+    return '';
+  });
 }

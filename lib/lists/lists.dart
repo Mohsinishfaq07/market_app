@@ -18,26 +18,26 @@ class Lists {
               ));
         },
       },
-      {
-        'name': 'Cars',
-        'onTap': () {
-          globalFunctions.nextScreen(
-              context,
-              SubCategoriesPage(
-                subCategoryList: getCarCategoryList(context: context),
-              ));
-        },
-      },
-      {
-        'name': 'Bikes',
-        'onTap': () {
-          globalFunctions.nextScreen(
-              context,
-              SubCategoriesPage(
-                subCategoryList: getBikeCategoryList(context: context),
-              ));
-        },
-      },
+      // {
+      //   'name': 'Cars',
+      //   'onTap': () {
+      //     globalFunctions.nextScreen(
+      //         context,
+      //         SubCategoriesPage(
+      //           subCategoryList: getCarCategoryList(context: context),
+      //         ));
+      //   },
+      // },
+      // {
+      //   'name': 'Bikes',
+      //   'onTap': () {
+      //     globalFunctions.nextScreen(
+      //         context,
+      //         SubCategoriesPage(
+      //           subCategoryList: getBikeCategoryList(context: context),
+      //         ));
+      //   },
+      // },
     ];
   }
 

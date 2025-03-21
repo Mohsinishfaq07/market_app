@@ -6,6 +6,7 @@ import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/user_detail.dart';
 import 'package:market/view/auth/login.dart';
+import 'package:market/view/bottom_nav/bottom_nav.dart';
 import 'package:market/view/home_page/home_page.dart';
 
 class AuthServices {
@@ -16,7 +17,7 @@ class AuthServices {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       globalFunctions.showLog(message: 'user logged in');
-      globalFunctions.nextScreen(context, HomePage());
+      globalFunctions.nextScreen(context, BottomNavPage());
     } else {
       globalFunctions.showLog(message: 'user not logged in');
       globalFunctions.nextScreen(context, LoginPage());
@@ -80,7 +81,7 @@ class AuthServices {
               message: 'Account created successfully',
               toastType: ToastType.info);
           authProvider.clearSignupProviderSection(ref: ref);
-          globalFunctions.nextScreen(context, HomePage());
+          globalFunctions.nextScreen(context, BottomNavPage());
         } else {
           await credential.user!.delete();
 
@@ -133,7 +134,7 @@ class AuthServices {
           password: password,
         );
         authProvider.clearLoginProviderSection(ref: widgetRef);
-        globalFunctions.nextScreen(context, HomePage());
+        globalFunctions.nextScreen(context, BottomNavPage());
         return userCredential;
       } on FirebaseAuthException catch (e) {
         globalFunctions.showToast(
