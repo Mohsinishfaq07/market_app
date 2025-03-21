@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/view/product_show/home_page_show.dart';
+import 'package:market/view/profile_page/profile_page.dart';
 import 'package:market/view/sell_section/main_categories.dart';
 import 'package:market/widgets/app_bar/custom_app_bar.dart';
 
@@ -17,6 +18,14 @@ class HomePage extends ConsumerWidget {
       appBar: CustomAppBar(
         title: 'HomePage',
         showBackButton: false,
+        backButton: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ),
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -31,6 +40,48 @@ class HomePage extends ConsumerWidget {
             icon: const Icon(Icons.exit_to_app),
           ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                globalFunctions.nextScreen(context, ProfilePage());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.category),
+              title: const Text('Sell Product'),
+              onTap: () {
+                globalFunctions.nextScreen(
+                  context,
+                  MainCategoriesPage(),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text('Logout'),
+              onTap: () {
+                authServices.signOut(context: context);
+              },
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(

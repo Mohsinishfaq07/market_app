@@ -1,23 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthenticationProvider {
-  final emailController = StateProvider<String>((ref) {
+  final emailController = StateProvider.autoDispose<String>((ref) {
     return '';
   });
 
-  final passwordController = StateProvider<String>((ref) {
+  final passwordController = StateProvider.autoDispose<String>((ref) {
     return '';
   });
 
-  final nameController = StateProvider<String>((ref) {
+  final nameController = StateProvider.autoDispose<String>((ref) {
     return '';
   });
 
-  final phoneNumberController = StateProvider<String>((ref) {
+  final phoneNumberController = StateProvider.autoDispose<String>((ref) {
     return '';
   });
 
-  final showPassword = StateProvider<bool>((ref) {
+  final showPassword = StateProvider.autoDispose<bool>((ref) {
     return false;
   });
   clearLoginProviderSection({
