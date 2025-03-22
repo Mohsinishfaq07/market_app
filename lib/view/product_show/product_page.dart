@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:market/constants/constants.dart';
+import 'package:market/core/constants/colors.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/selling_models/charger_model.dart';
 import 'package:market/models/selling_models/headphone_model.dart';
@@ -13,326 +14,283 @@ import 'package:market/widgets/app_bar/custom_app_bar.dart';
 class ProductPage extends StatelessWidget {
   final Map<String, dynamic> productData;
   final Categories productSellType;
-  const ProductPage(
-      {super.key, required this.productData, required this.productSellType});
+  const ProductPage({
+    super.key,
+    required this.productData,
+    required this.productSellType,
+  });
 
   @override
   Widget build(BuildContext context) {
-    switch (productSellType) {
-      case Categories.mobiles:
-        return MobileMainProductPage(productData: productData);
-      case Categories.tablets:
-        return TabletMainProductPage(productData: productData);
-      case Categories.chargers:
-        return ChargerMainPRoductPage(productData: productData);
-      case Categories.headphones:
-        return HeadPhoneMainProductPage(productData: productData);
-    }
-  }
-}
-
-class MobileMainProductPage extends StatelessWidget {
-  final Map<String, dynamic> productData;
-  const MobileMainProductPage({super.key, required this.productData});
-
-  @override
-  Widget build(BuildContext context) {
-    MobileSellModel mobileModel = MobileSellModel.fromMap(productData);
     return Scaffold(
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        spacing: 20.0,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
-            },
-            child: const Icon(Icons.phone),
+      backgroundColor: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          // Custom App Bar with Image Slider
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            backgroundColor: AppColors.primary,
+            flexibleSpace: _buildImageSlider(context),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openWhatsApp(
-                phoneNumber: ownerDetails.phoneNumber,
-              );
-            },
-            child: const Icon(Icons.message),
+          // Product Details
+          SliverToBoxAdapter(
+            child: _buildProductDetails(context),
           ),
         ],
       ),
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: 'Product Page',
+      bottomNavigationBar: _buildContactButtons(context),
+    );
+  }
+
+  Widget _buildImageSlider(BuildContext context) {
+    final images = _getProductImages();
+    return FlexibleSpaceBar(
+      background: PageView.builder(
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          return Image.file(
+            File(images[index]),
+            fit: BoxFit.cover,
+          );
+        },
       ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+    );
+  }
+
+  Widget _buildProductDetails(BuildContext context) {
+    final details = _getProductDetails();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Price and Location
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '₹${details['price']}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    details['location'] ?? '',
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Product Title
+          Text(
+            details['title'] ?? '',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Specifications
+          ..._buildSpecifications(details['specifications'] ?? {}),
+          const SizedBox(height: 16),
+
+          // Description
+          const Text(
+            'Description',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            details['description'] ?? '',
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildSpecifications(Map<String, String> specs) {
+    return [
+      const Text(
+        'Specifications',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      const SizedBox(height: 8),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: specs.entries.map((spec) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              '${spec.key}: ${spec.value}',
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          );
+        }).toList(),
+      ),
+    ];
+  }
+
+  Widget _buildContactButtons(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Row(
           children: [
-            SizedBox(
-              height: 200,
-              width: MediaQuery.sizeOf(context).width - 30,
-              child: ListView.builder(
-                itemCount: mobileModel.images.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Container(
-                      padding: EdgeInsets.all(4.0),
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: Colors.grey, width: 2),
-                      ),
-                      child: Image.file(File(mobileModel.images[index])));
-                },
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _makePhoneCall(context),
+                icon: const Icon(Icons.phone),
+                label: const Text('Call'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
               ),
             ),
-            Text('Mobile Brand: ${mobileModel.productBrand}'),
-            Text('Location: ${mobileModel.productLocation}'),
-            Text('Price: ${mobileModel.productPrice}'),
-            Text('Description:\n${mobileModel.productDescription}'),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _openWhatsApp(context),
+                icon: const Icon(Icons.message),
+                label: const Text('WhatsApp'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-class TabletMainProductPage extends StatelessWidget {
-  final Map<String, dynamic> productData;
-  const TabletMainProductPage({super.key, required this.productData});
-
-  @override
-  Widget build(BuildContext context) {
-    TabletSellModel tabletModel = TabletSellModel.fromMap(productData);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        spacing: 20.0,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
-            },
-            child: const Icon(Icons.phone),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openWhatsApp(
-                phoneNumber: ownerDetails.phoneNumber,
-              );
-            },
-            child: const Icon(Icons.message),
-          ),
-        ],
-      ),
-      appBar: CustomAppBar(
-        title: 'Product Page',
-      ),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.grey, width: 2),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                width: MediaQuery.sizeOf(context).width - 30,
-                child: ListView.builder(
-                  itemCount: tabletModel.images.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Container(
-                        padding: EdgeInsets.all(4.0),
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: Colors.grey, width: 2),
-                        ),
-                        child: Image.file(File(tabletModel.images[index])));
-                  },
-                ),
-              ),
-              Text('Tablets Brand: ${tabletModel.productBrand}'),
-              Text('Location: ${tabletModel.productLocation}'),
-              Text('Price: ${tabletModel.productPrice}'),
-              Text('Description:\n${tabletModel.productDescription}'),
-            ],
-          ),
-        ),
-      ),
+  Future<void> _makePhoneCall(BuildContext context) async {
+    final ownerDetails = await authServices.getUserDetails(
+      userId: productData['uploadedBy'],
     );
+    globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
   }
-}
 
-class ChargerMainPRoductPage extends StatelessWidget {
-  final Map<String, dynamic> productData;
-  const ChargerMainPRoductPage({super.key, required this.productData});
-
-  @override
-  Widget build(BuildContext context) {
-    AccessoryChargerModel chargerModel =
-        AccessoryChargerModel.fromMap(productData);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        spacing: 20.0,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
-            },
-            child: const Icon(Icons.phone),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openWhatsApp(
-                phoneNumber: ownerDetails.phoneNumber,
-              );
-            },
-            child: const Icon(Icons.message),
-          ),
-        ],
-      ),
-      appBar: CustomAppBar(
-        title: 'Product Page',
-      ),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.grey, width: 2),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                width: MediaQuery.sizeOf(context).width - 30,
-                child: ListView.builder(
-                  itemCount: chargerModel.images.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Container(
-                        padding: EdgeInsets.all(4.0),
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: Colors.grey, width: 2),
-                        ),
-                        child: Image.file(File(chargerModel.images[index])));
-                  },
-                ),
-              ),
-              Text('Charger for: ${chargerModel.chargerForDevice}'),
-              Text('Charger Type: ${chargerModel.chargerType}'),
-              Text('Charger Condition: ${chargerModel.productCondition}'),
-              Text('Location: ${chargerModel.productLocation}'),
-              Text('Price: ${chargerModel.productPrice}'),
-              Text('Description:\n${chargerModel.productDescription}'),
-            ],
-          ),
-        ),
-      ),
+  Future<void> _openWhatsApp(BuildContext context) async {
+    final ownerDetails = await authServices.getUserDetails(
+      userId: productData['uploadedBy'],
     );
+    globalFunctions.openWhatsApp(phoneNumber: ownerDetails.phoneNumber);
   }
-}
 
-class HeadPhoneMainProductPage extends StatelessWidget {
-  final Map<String, dynamic> productData;
-  const HeadPhoneMainProductPage({super.key, required this.productData});
+  List<String> _getProductImages() {
+    switch (productSellType) {
+      case Categories.mobiles:
+        return MobileSellModel.fromMap(productData).images;
+      case Categories.tablets:
+        return TabletSellModel.fromMap(productData).images;
+      case Categories.chargers:
+        return AccessoryChargerModel.fromMap(productData).images;
+      case Categories.headphones:
+        return AccessoryHeadphonesModel.fromMap(productData).images;
+    }
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    AccessoryHeadphonesModel headphonesModel =
-        AccessoryHeadphonesModel.fromMap(productData);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        spacing: 20.0,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openPhoneDialer(ownerDetails.phoneNumber);
-            },
-            child: const Icon(Icons.phone),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              UserDetail ownerDetails = await authServices.getUserDetails(
-                  userId: productData['uploadedBy']);
-              globalFunctions.openWhatsApp(
-                phoneNumber: ownerDetails.phoneNumber,
-              );
-            },
-            child: const Icon(Icons.message),
-          ),
-        ],
-      ),
-      appBar: CustomAppBar(
-        title: 'Product Page',
-      ),
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.grey, width: 2),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                width: MediaQuery.sizeOf(context).width - 30,
-                child: ListView.builder(
-                  itemCount: headphonesModel.images.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Container(
-                        padding: EdgeInsets.all(4.0),
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: Colors.grey, width: 2),
-                        ),
-                        child: Image.file(File(headphonesModel.images[index])));
-                  },
-                ),
-              ),
-              Text('HeadPhone Type: ${headphonesModel.headphoneType}'),
-              Text('HeadPhone Condition: ${headphonesModel.productCondition}'),
-              Text('Location: ${headphonesModel.productLocation}'),
-              Text('Price: ${headphonesModel.productPrice}'),
-              Text('Description:\n${headphonesModel.productDescription}'),
-            ],
-          ),
-        ),
-      ),
-    );
+  Map<String, dynamic> _getProductDetails() {
+    switch (productSellType) {
+      case Categories.mobiles:
+        final model = MobileSellModel.fromMap(productData);
+        return {
+          'title': model.productBrand,
+          'price': model.productPrice,
+          'location': model.productLocation,
+          'description': model.productDescription,
+          'specifications': {
+            'Brand': model.productBrand,
+            'Type': 'Mobile Phone',
+            'Location': model.productLocation,
+          },
+        };
+      case Categories.tablets:
+        final model = TabletSellModel.fromMap(productData);
+        return {
+          'title': model.productBrand,
+          'price': model.productPrice,
+          'location': model.productLocation,
+          'description': model.productDescription,
+          'specifications': {
+            'Brand': model.productBrand,
+            'Type': 'Tablet',
+            'Location': model.productLocation,
+          },
+        };
+      case Categories.chargers:
+        final model = AccessoryChargerModel.fromMap(productData);
+        return {
+          'title': '${model.chargerType} Charger',
+          'price': model.productPrice,
+          'location': model.productLocation,
+          'description': model.productDescription,
+          'specifications': {
+            'Type': model.chargerType,
+            'For Device': model.chargerForDevice,
+            'Condition': model.productCondition,
+          },
+        };
+      case Categories.headphones:
+        final model = AccessoryHeadphonesModel.fromMap(productData);
+        return {
+          'title': '${model.headphoneType} Headphones',
+          'price': model.productPrice,
+          'location': model.productLocation,
+          'description': model.productDescription,
+          'specifications': {
+            'Type': model.headphoneType,
+            'Condition': model.productCondition,
+          },
+        };
+    }
   }
 }

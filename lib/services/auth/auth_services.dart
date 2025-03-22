@@ -6,7 +6,7 @@ import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/user_detail.dart';
 import 'package:market/view/auth/login.dart';
-import 'package:market/view/bottom_nav/bottom_nav.dart';
+import 'package:market/view/base_screen/base_screen.dart';
 import 'package:market/view/home_page/home_page.dart';
 
 class AuthServices {
@@ -17,10 +17,10 @@ class AuthServices {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       globalFunctions.showLog(message: 'user logged in');
-      globalFunctions.nextScreen(context, BottomNavPage());
+      globalFunctions.nextScreen(context, const BaseScreen());
     } else {
       globalFunctions.showLog(message: 'user not logged in');
-      globalFunctions.nextScreen(context, LoginPage());
+      globalFunctions.nextScreen(context, const LoginPage());
     }
   }
 
@@ -81,7 +81,7 @@ class AuthServices {
               message: 'Account created successfully',
               toastType: ToastType.info);
           authProvider.clearSignupProviderSection(ref: ref);
-          globalFunctions.nextScreen(context, BottomNavPage());
+          globalFunctions.nextScreen(context, const BaseScreen());
         } else {
           await credential.user!.delete();
 
@@ -134,7 +134,10 @@ class AuthServices {
           password: password,
         );
         authProvider.clearLoginProviderSection(ref: widgetRef);
-        globalFunctions.nextScreen(context, BottomNavPage());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BaseScreen()),
+        );
         return userCredential;
       } on FirebaseAuthException catch (e) {
         globalFunctions.showToast(
@@ -160,7 +163,7 @@ class AuthServices {
     try {
       await FirebaseAuth.instance.signOut().then((val) {
         globalFunctions.showLog(message: 'sign out');
-        globalFunctions.nextScreen(context, LoginPage());
+        globalFunctions.nextScreen(context, const LoginPage());
       });
     } catch (e) {
       debugPrint(e.toString());
