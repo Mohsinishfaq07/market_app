@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:market/constants/constants.dart';
 import 'package:market/enums/global_enums.dart';
 import 'package:market/models/user_detail.dart';
 
 class FirestoreService {
+  ChatService chatService = ChatService();
   // save user details
   Future<bool> storeUserData({required UserDetail user}) async {
     try {
@@ -43,6 +45,8 @@ class FirestoreService {
       globalFunctions.showLog(message: "Error uploading product: $e");
       rethrow;
     }
+
+    ChatService chatService = ChatService();
   }
 
   // fetch categories
@@ -72,5 +76,65 @@ class FirestoreService {
         .map((snapshot) {
       return snapshot.docs.map((doc) => doc.data()).toList();
     });
+  }
+}
+
+class ChatService {
+  Future<void> sendFirstMessage({
+    required String message,
+    required String sellerId,
+    required String buyerId,
+  }) async {
+    try {
+      String chatId = buyerId.hashCode <= sellerId.hashCode
+          ? '${buyerId}_$sellerId'
+          : '${sellerId}_$buyerId';
+
+      final chatRef =
+          FirebaseFirestore.instance.collection('chats').doc(chatId);
+
+      await chatRef.set({
+        'buyerId': buyerId,
+        'sellerId': sellerId,
+        'lastMessage': message,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      await chatRef.collection('messages').add({
+        'message': message,
+        'senderId': FirebaseAuth.instance.currentUser!.uid,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      globalFunctions.showToast(
+          message: 'Message Sended', toastType: ToastType.success);
+    } catch (e) {
+      globalFunctions.showLog(message: 'Error sending message: $e');
+      globalFunctions.showToast(
+          message: 'Error sending message: $e', toastType: ToastType.error);
+    }
+  }
+
+  Future<void> sendMessage({
+    required String message,
+    required String chatId,
+    required String currentUserId,
+  }) async {
+    try {
+      final chatRef =
+          FirebaseFirestore.instance.collection('chats').doc(chatId);
+
+      await chatRef.set({
+        'lastMessage': message,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      await chatRef.collection('messages').add({
+        'message': message,
+        'senderId': currentUserId,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      globalFunctions.showLog(message: 'Error sending message: $e');
+    }
   }
 }

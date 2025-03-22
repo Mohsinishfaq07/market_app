@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:market/constants/constants.dart';
 import 'package:market/core/constants/colors.dart';
@@ -129,6 +131,30 @@ class ProductPage extends StatelessWidget {
               height: 1.5,
             ),
           ),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              height: 40,
+              alignment: Alignment.center,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.orangeAccent,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('Product Available?'),
+                  TextButton(
+                    onPressed: () {
+                      firestoreService.chatService.sendFirstMessage(
+                          message: 'Is This Product Available?',
+                          sellerId: productData['uploadedBy'],
+                          buyerId: FirebaseAuth.instance.currentUser!.uid);
+                    },
+                    child: Text('Send Message'),
+                  )
+                ],
+              ))
         ],
       ),
     );
